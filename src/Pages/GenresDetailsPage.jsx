@@ -1,45 +1,48 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/jsx-key */
-
 import { useEffect, useState } from "react";
-import MoviesServices from "../Services/MoviesServices";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Button, Container } from "react-bootstrap";
+import GenresServices from "../Services/GenresServices";
 import MovieCard from "../Components.jsx/Movie.card";
 import Pagination from 'react-bootstrap/Pagination';
 
-const HomePage = () => {
-    const [movies,setMovies] = useState([]);
+
+const GenresDetailsPage = () => {
+    const {id} = useParams();
+    const location = useLocation();
+    const [movies, setMovies] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [maxPage,setMaxPage] = useState(500);
+   
 
-    const FetchMovies = async () => {
+    const FetchMoviesByGenreID = async () => {
         try {
-           const response = await MoviesServices.getAllMovies(currentPage); 
-           setMovies(response.data.results);
-           setTimeout(() => {
-            window.scrollTo({
-                top: 0,
-                left: 0,
-                behavior: "instant",
-              });
-        },50)
+            const response = await  GenresServices.getMoviesByGenreID(currentPage, id);
+            setMovies(response.data.results); 
+            // fonction qui permet de scroll automatiquement vers le haut a mettre dans la const pour quelle soit rappeler a chaque fois 
+            setTimeout(() => {
+                window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: "instant",
+                  });
+            },50);
         } catch (error) {
             console.log(error);
-            
         }
     }
 
     useEffect(() => {
-        FetchMovies()
-    }, [currentPage])
-    
-    return <>
-    <h1 className="d-flex justify-content-center gap-3">Page accueil</h1>
-    <div className="d-flex justify-content-center flex-wrap gap-3">
-    
+        FetchMoviesByGenreID();
+    },[currentPage]);
+
+    console.log(location);
+    return <> <Container className="d-flex flex-column align-items-center mb-3">
+    <h1>{location.state.genre.name}</h1>
+    <div className="d-flex justify-content-center flex-wrap gap-3 ">
     {movies.map((movie) => {
         return <MovieCard movieCard={movie} key={movie.id}></MovieCard>
     })}
+
     </div>
     <Pagination className="d-flex justify-content-center mt-5 gap-1">
         {currentPage > 1 && <>
@@ -70,7 +73,9 @@ const HomePage = () => {
       </>}
 
     </Pagination>
-</>;
+
+    </Container>
+    </>;
 }
  
-export default HomePage;
+export default GenresDetailsPage; 

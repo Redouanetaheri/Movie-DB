@@ -1,46 +1,45 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/jsx-key */
-
+import { Await, useNavigate } from "react-router-dom";
+import PeopleService from "../Services/PeopleService";
 import { useEffect, useState } from "react";
-import MoviesServices from "../Services/MoviesServices";
-import MovieCard from "../Components.jsx/Movie.card";
+import PeopleCard from "../Components.jsx/PeopleCard";
 import Pagination from 'react-bootstrap/Pagination';
 
-const HomePage = () => {
-    const [movies,setMovies] = useState([]);
+
+const PeoplePage = () => {
+
+    const [Actor, setActor] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [maxPage,setMaxPage] = useState(500);
 
-    const FetchMovies = async () => {
+    const fetchAllPeople = async () => {
         try {
-           const response = await MoviesServices.getAllMovies(currentPage); 
-           setMovies(response.data.results);
-           setTimeout(() => {
-            window.scrollTo({
-                top: 0,
-                left: 0,
-                behavior: "instant",
-              });
-        },50)
+            const response = await PeopleService.getAllPeople(currentPage);
+            console.log(response.data.results);
+            setActor(response.data.results);
+            setTimeout(() => {
+                window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: "instant",
+                  });
+            },50)
         } catch (error) {
-            console.log(error);
-            
+            console.log(error)
         }
     }
 
-    useEffect(() => {
-        FetchMovies()
-    }, [currentPage])
+    useEffect(() =>{
+        fetchAllPeople()
+    },[currentPage]);
     
-    return <>
-    <h1 className="d-flex justify-content-center gap-3">Page accueil</h1>
+    return<>
+    <h1>Acteurs</h1>
     <div className="d-flex justify-content-center flex-wrap gap-3">
-    
-    {movies.map((movie) => {
-        return <MovieCard movieCard={movie} key={movie.id}></MovieCard>
+    {Actor.map((Actor) => {
+          return <PeopleCard PeopleCard={Actor} key={Actor.id}></PeopleCard>
     })}
     </div>
+
     <Pagination className="d-flex justify-content-center mt-5 gap-1">
         {currentPage > 1 && <>
       <Pagination.First onClick={() => {setCurrentPage(1)}}/>
@@ -70,7 +69,8 @@ const HomePage = () => {
       </>}
 
     </Pagination>
-</>;
+    </>;
+    
 }
  
-export default HomePage;
+export default PeoplePage;

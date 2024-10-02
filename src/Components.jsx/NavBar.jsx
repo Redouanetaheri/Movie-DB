@@ -14,6 +14,9 @@ const NavBar = () => {
           <Nav className="me-auto">
           <Link to={"/genres"}>Genres</Link>
           </Nav>
+          <Nav>
+          <Link to={"/PeoplePage"}>Acteurs</Link>
+          </Nav>
         </Navbar.Collapse>
       </Container>
     </Navbar>
