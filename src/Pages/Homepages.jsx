@@ -6,11 +6,15 @@ import { useEffect, useState } from "react";
 import MoviesServices from "../Services/MoviesServices";
 import MovieCard from "../Components.jsx/Movie.card";
 import Pagination from 'react-bootstrap/Pagination';
+import { Button, Form } from "react-bootstrap";
+
 
 const HomePage = () => {
     const [movies,setMovies] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [maxPage,setMaxPage] = useState(500);
+    const [searchValue,setSearchValue] = useState('');
+    const [searching,setSearching] = useState(false);
 
     const FetchMovies = async () => {
         try {
@@ -29,12 +33,50 @@ const HomePage = () => {
         }
     }
 
+    const searchFilm= async () => { 
+      if (searchValue == "") {
+        FetchMovies();
+        setSearching(false);
+      }else{
+      try {
+        const response = await MoviesServices.getMovieByTitle(searchValue, currentPage);
+        setMaxPage(response.data.total_pages);
+        setMovies(response.data.results);
+        
+        ;
+      } catch (error) {
+        console.log(error);
+        
+      }
+      
+    }
+  }
+
     useEffect(() => {
+      if (searching == false) {
         FetchMovies()
+      }else{
+        searchFilm();
+      }
+        
     }, [currentPage])
     
     return <>
     <h1 className="d-flex justify-content-center gap-3">Page accueil</h1>
+    <Form.Label htmlFor="inputPassword5">Recherche</Form.Label>
+      <Form.Control
+        type="text"
+        id="search"
+        aria-describedby="Search"
+        placeholder="ex : Deadpool"
+        className="mb-3"
+        value={searchValue}
+        onChange={(e)=> {
+          setSearchValue(e.currentTarget.value);
+          
+        }}
+      />
+      <Button variant="primary" className="col-12 mb-3" onClick={() => {setCurrentPage(1); setSearching(true); searchFilm();}}>Recherche</Button>
     <div className="d-flex justify-content-center flex-wrap gap-3">
     
     {movies.map((movie) => {

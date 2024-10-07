@@ -31,6 +31,13 @@ const PeopleDetails = () => {
             const response = await PeopleService.getMoviesByPeopleID(currentPage,id);
             console.log(response.data);
             setMovie(response.data.results)
+            setTimeout(() => {
+                window.scrollTo({
+                    top: 800,
+                    left: 0,
+                    behavior: "instant",
+                  });
+            },50)
             
         } catch (error) {
             console.log(error);
